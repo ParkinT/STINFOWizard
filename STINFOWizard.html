@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>STINFO Distribution Statement Generator (ParkinT)</title>
+<HTA:APPLICATION ID="oSTINFOWizard" 
+    APPLICATIONNAME="STINFOWizard" 
+    BORDER="dialog"
+    BORDERSTYLE="complex"
+    CAPTION="yes"
+    CONTEXTMENU="no"
+    MAXIMIZEBUTTON="no"
+    MINIMIZEBUTTON="yes"
+    SCROLL="no"
+    SELECTION="yes"
+    SHOWINTASKBAR="no"
+    SINGLEINSTANCE="yes"
+    SYSMENU="yes"
+    WINDOWSTATE="normal" VERSION="1.0" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<!-- Developed by Thom Parkin 
+     This may be freely distributed and used as long as you understand it is provided 'as is'
+     No warranty as to suitability and no guarantee as to usability are made
+     The content of this file is STINFO Distribution A: Public -->
+<script type="text/javascript">
+var today, dist, rowClass, hilightColor, choiceLocked;
+var openingMessage = "Thank you for using the STINFO Wizard.\n1. Select the appropriate category for your document\n2.Click the 'Generate STINFO' button.\n3.The result will be formatted for you to print or copy/paste.";
+window.onload = function () {
+    cdo = document.getElementById('cdo');
+    cdo.value = "ESC/HBMJ, Hanscom AFB, Massachusetts 01731";
+    dist = document.getElementById('distribution');
+    var theDate = new Date();
+    var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+    today = months[theDate.getMonth()] + " " + theDate.getDate().toString() + ", " + theDate.getFullYear().toString();
+    hilightColor = "#40d0f0";
+    choiceLocked = false;
+    setColumnEvent();
+    window.resizeTo(720, 890);
+    alert(openingMessage);
+}
+var audienceText = new Array(
+    "A: Approved for public release; distribution is unlimited",
+    "B: Distribution authorized to U.S. Government agencies only",
+    "C: Distribution authorized to U.S. Government agencies and their contractors",
+    "D: Distribution authorized to Department of Defense and U.S. DoD contractors only" /*this is SEIC*/,
+    "E: Distribution authorized to DoD components only",
+    "F: Further Dissemination only as directed by controlling DoD office",
+    "X: Distribution authorized to U.S. Government Agencies and private individuals or enterprises eligible to obtain export-controlled technical data"
+)
+var audienceSelections = new Array();
+for (var i=0; i<audienceText.length; i++) {
+    audienceSelections.push((audienceText[i].substring(0,1)).toLowerCase());
+}
+
+function writeSTINFO() {
+    var aud = document.getElementById('audience');
+    var cdo = document.getElementById('cdo');
+    var reason = document.getElementById('reasonstatement');
+    var stinfo = document.getElementById('stinfo');
+    var outputText = "<span class=\"dist\">Distribution Statement " + audienceText[aud.selectedIndex].substring(0,2) + "</span>&nbsp;";
+    outputText = outputText + "<span class=\"reason\">(" + audienceText[aud.selectedIndex].substring(3);
+    outputText = outputText + "; " + reason[reason.selectedIndex].value + ")</span>,&nbsp;<span class=\"date\">(" + today + ").</span>";
+    outputText = outputText + "Other requests for this document shall be referred to <span class=\"cdo\">" + cdo.value + ".</span>";
+    stinfo.innerHTML = outputText;
+    choiceLocked = false;
+    //without any formatting
+    var stinfoText = "Distribution Statement " + audienceText[aud.selectedIndex].substring(0,2) + " (" + audienceText[aud.selectedIndex].substring(3) + "; " + reason[reason.selectedIndex].value + ")(" + today + "). Other requests for this document shall be referred to " + cdo.value + ".";
+    if (document.getElementById('audience').selectedIndex == 0) {
+        document.getElementById('destructbox').style.visibility = 'hidden';
+        document.getElementById('destructtitle').style.visibility = 'hidden';
+    } else {
+        //destruction notice
+        stinfoText = stinfoText + "<br />Destroy by any method that will prevent disclosure of contents or reconstruction of the document."; //"<br />DESTRUCTION NOTICE: Follow the procedures in DoD 5220.22-M, National Industrial Security Program Operating Manual (NISPOM), Section 5-705, or DoD 5200.1-R, Information Security Program, Chapter VI."
+    }
+    //copy to clipboard
+    var holdtext = document.getElementById('holder');
+    holdtext.innerText = stinfoText;
+    var textRange = holdtext.createTextRange(); 
+    textRange.execCommand("RemoveFormat");
+    textRange.execCommand("Copy");     
+    printSTINFO();
+}
+
+function printSTINFO() {
+    alert("Your STINFO box is ready to be printed.\nIf you select the 'Microsoft Office Document Image Writer' from the Print dialog, you can save the STINFO box as an image to include in your document.\nAlternatively, this STINFO has been placed in your Windows Clipboard to PASTE into a document directly.");
+    window.print();
+}
+
+function trow(elm, onoffbool) {
+    var therow = elm.getElementsByTagName('td');
+    if (onoffbool) { // hilight
+        rowClass = therow[0].className;
+        therow[0].className = rowClass + " rowhilight";
+    } else { //restore bg
+        therow[0].className = rowClass;
+    }
+}
+function setColumnEvent() {
+    var tds = document.getElementsByTagName('td');  //a list of all td elements
+    for (var e = 0; e < tds.length; e++) {
+        switch (tds[e].className) {
+            case "a" :
+            case "b" :
+            case "c" :
+            case "d" :
+            case "e" :
+            case "f" :
+            case "x" :
+                tds[e].onclick = function() {
+                    var aud = document.getElementById('audience');
+                    alert("Your selection of '" + audienceText[aud.selectedIndex] + "' has been set");
+                    choiceLocked = true;
+                }
+                tds[e].onmouseover = function() { 
+                    this.backgroundColor = hilightColor;
+                    if (choiceLocked != true) {
+                        for(var i = 0; i < audienceText.length; i++) {
+                            if (audienceText[i].substring(0,1).toLowerCase() == this.className) {
+                                document.getElementById('audience').selectedIndex = i;
+                                //display usage statement for chosen type?
+                                break;
+                            }
+                        }
+                    } //if choiceLocked
+                }
+                break;
+        }
+        
+    }
+}
+</script>
+</head>
+<style media="screen, print">
+    #stinfo { visibility: visible; }
+    .stinfobox { font-family: serif; font-size:12pt; text-align:left; margin-left:10%; margin: 30px auto 5px auto; }
+    .stinfobox { padding: 0.5ex 1em; border: #606080 thin inset; border-bottom:thick; border-right:thick; width:6in; }
+    .stinfobox .dist { text-decoration:underline; }
+    .stinfobox .reason { /*font-weight:700;*/ }
+    .stinfobox .date { /*display: block;*/ }
+    .stinfobox .cdo { /*font-size: 110%;*/ }
+
+    form { padding:10px; padding-top:0.5ex; background-color: #f0f0f0; border: thin ridge #808080; width: 650px; }
+    input { margin-left: 5px; margin-top:5px; }
+    .rowhilight { background-color:#20ffff; }
+    #cdo { width:380px; background-color:#bbb; margin-top:8px; }
+    #reasonschart table { width:650px; margin-left:0.2in; padding:2px 4px; background-color: #60d0ff; }
+    #reasonschart table tr td { background:#f0f0f0; }
+    .tblhead, .colhead { padding:0,25ex 0.5em; background-color: #606060; color:#ffffff; }
+    .reasoncol { border-bottom: thin solid #200000; }
+    .a, .b, .c, .d, .e, .f, .x { font-weight:bold; background-color: #906040; text-align:center; color:#000000; border-color: #200000; }
+    .a:hover, .b:hover, .c:hover, .d:hover, .e:hover, .f:hover, .x:hover { background-color: #50d0f0; }
+    .x { color: #ff0000; }
+    
+    
+    #titlebox, #destructtitle { position:relative; left:40%; top:32px; font-size:150%; font-stretch:extended; }
+    #destructtitle { left: 30%; }
+    #destructtitle, #destbox { visibility: visible; } /* this appears unless STINFO A is chosen */
+    
+    #epg { margin-left: 10%; padding:none inherit; }
+    #epg a { text-decoration: none; }
+    #epg, #epg * { color:#ff0020; }
+    
+    /* for clipboard copy-paste */
+    #holder { visibility:hidden; }
+    
+</style>
+<style media="print">
+    html, body { width: 7.5in; height:4in; }
+    form, form * { display: none; }
+    #epg, #reasonschart, #reasonschart * { display: none; }
+</style>
+<div style="display:none;" class="stinfobox"><span class="dist">Distribution Statement A:</span> <span class="reason">Distribution authorized to Public, Administrative/Operational Use</span>, <span class="date">October 30, 2008.</span>Other requests for this document shall refer to <span class="cdo">Thom Parkin, SEIC Orlando</span></div>
+<body>
+    <div id="reasonschart">
+        <table width="50%">
+            <thead class="head"><tr><th class="tblhead">Reason for Imposing Distribution Statement</th><th class="tblhead" colspan="7">Distribution Statement</th></tr></thead>
+            <thead class="head"><tr><th class="tblhead" /><th class="colhead">A</th><th class="colhead">B</th><th class="colhead">C</th><th class="colhead">D</th><th class="colhead">E</th><th class="colhead">F</th><th class="colhead">X</th></tr>
+            <tbody>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Foreign Government Information</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Proprietary Information</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Critical Technology</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Test &amp; Evaluation</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Contractor Performance Evaluation</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Premature Dissemination</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Administrative/Operational Use</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Software Documentation</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Specific Authority (identify)</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Direct Military Support</td><td class="a" /><td class="b"/><td class="c"/><td class="d"/><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol"><i>*Public and Foreign Release</i></td><td class="a">O</td><td class="b"/><td class="c"/><td class="d"/><td class="e"/><td class="f"/><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol"><i>*Classified Only</i></td><td class="a" /><td class="b"/><td class="c"/><td class="d"/><td class="e"/><td class="f">O</td><td class="x" /></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol"><i>*Export Control of Unclassified Technical Data</i></td><td class="a" /><td class="b"/><td class="c"/><td class="d"/><td class="e"/><td class="f"/><td class="x">O</td></tr>
+                <tr><td colspan="8"></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="epg"><a href="http://www.dtic.mil/dtic/customer/training/stinfo/index.html" title="Get details and specific guidance for STINFO policy" target="_blank">Get details of STINFO</a>.</div>
+<form>
+    <label for="audience">Authorized Audience:</label>
+    <select id="audience">
+        <option value="A"><script language="javascript">document.write(audienceText[0]);</script></option>
+        <option value="B"><script language="javascript">document.write(audienceText[1]);</script></option>
+        <option value="C"><script language="javascript">document.write(audienceText[2]);</script></option>
+        <option value="D" selected="selected"><script language="javascript">document.write(audienceText[3]);</script></option>
+        <option value="E"><script language="javascript">document.write(audienceText[4]);</script></option>
+        <option value="F"><script language="javascript">document.write(audienceText[5]);</script></option>
+        <option value="X">X: Export-controlled technical data</option>
+    </select>
+    <br /><label for="reason">Reason for Restriction:</label>
+    <select id="reasonstatement">
+        <option value="Foreign Government Information">Foreign Government Information</option>
+        <option value="Proprietary Information">Proprietary Information</option>
+        <option value="Test and Evaluation">Test &amp; Evaluation</option>
+        <option value="Contractor Performance Evaluation">Contractor Performance Evaluation</option>
+        <option value="Critical Technology">Critical Technology</option>
+        <option value="Premature Dissemination">Premature Dissemination</option>
+        <option value="Software Documentation">Software Documentation</option>
+        <option value="Administrative/Operational Use" selected="selected">Administrative/Operational Use</option>
+        <option value="Specific Authority">Specific Authority (public laws &amp; statutes)</option>
+        <option value="Direct Military Support">Direct Military Support</option>
+    </select>
+    <br /><label for="cdo">Controlling DoD Office (CDO):</label><input onfocus="alert('This should NOT be changed');" type="text" id="cdo" />
+    <input style="float:right;" type="button" onClick="writeSTINFO()" value="Generate STINFO" />
+    <input id="holder" />
+</form>
+<div id="titlebox" title=""Scientific  and Technical INFOrmation">STINFO</div>
+<div id="stinfo" class="stinfobox"></div>
+<div id="destructtitle" title="Destruction Notice">DESTRUCTION NOTICE</div>
+<div id="destructbox" class="stinfobox">DESTRUCTION NOTICE: Destroy by any method that will prevent disclosure of contents or reconstruction of the document.</div>
+</body>
+</html>
