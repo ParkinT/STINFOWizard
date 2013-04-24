@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>STINFO Distribution Statement Generator (ParkinT)</title>
+<title>STINFO Distribution Statement Generator (Apr-2013)</title>
 <HTA:APPLICATION ID="oSTINFOWizard" 
     APPLICATIONNAME="STINFOWizard" 
     BORDER="dialog"
@@ -15,7 +15,7 @@
     SHOWINTASKBAR="no"
     SINGLEINSTANCE="yes"
     SYSMENU="yes"
-    WINDOWSTATE="normal" VERSION="1.0" />
+    WINDOWSTATE="normal" VERSION="2.0" />
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <!-- Developed by Thom Parkin 
@@ -42,10 +42,8 @@ var audienceText = new Array(
     "A: Approved for public release; distribution is unlimited",
     "B: Distribution authorized to U.S. Government agencies only",
     "C: Distribution authorized to U.S. Government agencies and their contractors",
-    "D: Distribution authorized to Department of Defense and U.S. DoD contractors only" /*this is SEIC*/,
-    "E: Distribution authorized to DoD components only",
-    "F: Further Dissemination only as directed by controlling DoD office",
-    "X: Distribution authorized to U.S. Government Agencies and private individuals or enterprises eligible to obtain export-controlled technical data"
+    "D: Distribution authorized to Department of Defense and U.S. DoD contractors only",
+    "E: Distribution authorized to DoD components only"
 )
 var audienceSelections = new Array();
 for (var i=0; i<audienceText.length; i++) {
@@ -104,8 +102,6 @@ function setColumnEvent() {
             case "c" :
             case "d" :
             case "e" :
-            case "f" :
-            case "x" :
                 tds[e].onclick = function() {
                     var aud = document.getElementById('audience');
                     alert("Your selection of '" + audienceText[aud.selectedIndex] + "' has been set");
@@ -147,9 +143,8 @@ function setColumnEvent() {
     #reasonschart table tr td { background:#f0f0f0; }
     .tblhead, .colhead { padding:0,25ex 0.5em; background-color: #606060; color:#ffffff; }
     .reasoncol { border-bottom: thin solid #200000; }
-    .a, .b, .c, .d, .e, .f, .x { font-weight:bold; background-color: #906040; text-align:center; color:#000000; border-color: #200000; }
-    .a:hover, .b:hover, .c:hover, .d:hover, .e:hover, .f:hover, .x:hover { background-color: #50d0f0; }
-    .x { color: #ff0000; }
+    .a, .b, .c, .d, .e { font-weight:bold; background-color: #906040; text-align:center; color:#000000; border-color: #200000; }
+    .a:hover, .b:hover, .c:hover, .d:hover, .e:hover { background-color: #50d0f0; }
     
     
     #titlebox, #destructtitle { position:relative; left:40%; top:32px; font-size:150%; font-stretch:extended; }
@@ -174,21 +169,21 @@ function setColumnEvent() {
     <div id="reasonschart">
         <table width="50%">
             <thead class="head"><tr><th class="tblhead">Reason for Imposing Distribution Statement</th><th class="tblhead" colspan="7">Distribution Statement</th></tr></thead>
-            <thead class="head"><tr><th class="tblhead" /><th class="colhead">A</th><th class="colhead">B</th><th class="colhead">C</th><th class="colhead">D</th><th class="colhead">E</th><th class="colhead">F</th><th class="colhead">X</th></tr>
+            <thead class="head"><tr><th class="tblhead" /><th class="colhead">A</th><th class="colhead">B</th><th class="colhead">C</th><th class="colhead">D</th><th class="colhead">E</th></tr>
             <tbody>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Foreign Government Information</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Proprietary Information</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Critical Technology</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Test &amp; Evaluation</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Contractor Performance Evaluation</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Premature Dissemination</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Administrative/Operational Use</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Software Documentation</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Specific Authority (identify)</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Direct Military Support</td><td class="a" /><td class="b"/><td class="c"/><td class="d"/><td class="e">O</td><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol"><i>*Public and Foreign Release</i></td><td class="a">O</td><td class="b"/><td class="c"/><td class="d"/><td class="e"/><td class="f"/><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol"><i>*Classified Only</i></td><td class="a" /><td class="b"/><td class="c"/><td class="d"/><td class="e"/><td class="f">O</td><td class="x" /></tr>
-                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol"><i>*Export Control of Unclassified Technical Data</i></td><td class="a" /><td class="b"/><td class="c"/><td class="d"/><td class="e"/><td class="f"/><td class="x">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Foreign Government Information</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Proprietary Information</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Critical Technology</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Test &amp; Evaluation</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Contractor Performance Evaluation</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Premature Dissemination</td><td class="a" /><td class="b">O</td><td class="c"/><td class="d"/><td class="e">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Administrative/Operational Use</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Software Documentation</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Specific Authority (identify)</td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol">Direct Military Support</td><td class="a" /><td class="b"/><td class="c"/><td class="d"/><td class="e">O</td></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol"><i>*Public and Foreign Release</i></td><td class="a">O</td><td class="b"/><td class="c"/><td class="d"/><td class="e"/></tr>
+                <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol"><i>*Classified Only</i></td><td class="a" /><td class="b"/><td class="c"/><td class="d"/><td class="e"/></tr>
+              <tr onmouseover="trow(this, true);" onmouseout="trow(this, false);"><td class="reasoncol"><i>*Export Control of Unclassified Technical Data</i></td><td class="a" /><td class="b">O</td><td class="c">O</td><td class="d">O</td><td class="e">O</td></tr>
                 <tr><td colspan="8"></td></tr>
             </tbody>
         </table>
@@ -202,8 +197,7 @@ function setColumnEvent() {
         <option value="C"><script language="javascript">document.write(audienceText[2]);</script></option>
         <option value="D" selected="selected"><script language="javascript">document.write(audienceText[3]);</script></option>
         <option value="E"><script language="javascript">document.write(audienceText[4]);</script></option>
-        <option value="F"><script language="javascript">document.write(audienceText[5]);</script></option>
-        <option value="X">X: Export-controlled technical data</option>
+
     </select>
     <br /><label for="reason">Reason for Restriction:</label>
     <select id="reasonstatement">
